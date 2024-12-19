@@ -1,3 +1,4 @@
+from collections import defaultdict
 class Contact:
     def __init__(self, first_name, last_name, address, city, state, zip_code, phone, email):
         self.first_name = first_name
@@ -14,7 +15,7 @@ class Contact:
 
 class AddressBook:
     def __init__(self):
-        self.contacts = {}
+        self.contacts =defaultdict(list)
 
     def add_contact(self, first_name, last_name, address, city, state, zip_code, phone, email):
         new_contact = Contact(first_name, last_name, address, city, state, zip_code, phone, email)
@@ -38,27 +39,41 @@ class AddressBook:
 
 address_book = AddressBook()
 
-address_book.add_contact(
-    # first_name=input("Enter the first name:"),
-    # last_name=input("Enter the second name:"),
-    # address=input("Enter the  address:"),
-    # city=input("Enter the city name:"),
-    # state=input("Enter the state name:"),
-    # zip_code=input("Enter the pin code:"),
-    # phone=input("Enter your Mobile number:"),
-    # email=input("Enter your email:")
-    
-    first_name="ram",
-    last_name="reddy",
-    address="1/15",
-    city="kurnool",
-    state="AP",
-    zip_code="54321",
-    phone="12345678",
-    email="ram@gmail.com"
-)
-address_book.del_contacts(
-    first_name=input("enter the first_name you want to delete from contacts:")
-)
+while True:
+    str1=input(" if you want to add contacts , enter add | don't want means enter no : ")
+    if str1 == "add":
+            address_book.add_contact(
+            first_name=input("Enter the first name:"),
+            last_name=input("Enter the second name:"),
+            address=input("Enter the  address:"),
+            city=input("Enter the city name:"),
+            state=input("Enter the state name:"),
+            zip_code=input("Enter the pin code:"),
+            phone=input("Enter your Mobile number:"),
+            email=input("Enter your email:")
+            
+            # first_name="ram",
+            # last_name="reddy",
+            # address="1/15",
+            # city="kurnool",
+            # state="AP",
+            # zip_code="54321",
+            # phone="12345678",
+            # email="ram@gmail.com"
+            )
+            print("successfully addded contacts!!")
+    else:
+     break
+while True:
+    str1=input(" if you want to delete contacts ,, enter delete | don't want means ,, enter no: ")
+    if str1 == "delete":
+      address_book.del_contacts(
+            first_name=input("enter the first_name you want to delete from contacts:")
+        )
+    else:
+        break
+
 
 address_book.display_contacts()
+
+
