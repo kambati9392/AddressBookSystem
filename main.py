@@ -18,17 +18,19 @@ class AddressBook:
 
     def add_contact(self, first_name, last_name, address, city, state, zip_code, phone, email):
         new_contact = Contact(first_name, last_name, address, city, state, zip_code, phone, email)
-        self.contacts[first_name]=[new_contact]
+        if first_name in self.contacts:
+           self.contacts[first_name].append(new_contact)
+        else:
+            self.contacts[first_name]=[new_contact]
 
-   
+  
     def display_contacts(self):
      for name, contact_list in self.contacts.items():
         print(f"'{name}': [")
         for contact in contact_list:
             print(f"  {contact}")
         print("]")
-    
-     
+   
 
 
 address_book = AddressBook()
@@ -43,6 +45,5 @@ address_book.add_contact(
     phone=input("Enter your Mobile number:"),
     email=input("Enter your email:")
 )
-
 
 address_book.display_contacts()
