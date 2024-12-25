@@ -21,7 +21,7 @@ class AddressBook:
     def add_contact(self, first_name, last_name, address, city, state, zip_code, phone, email):
         new_contact = Contact(first_name, last_name, address, city, state, zip_code, phone, email)
         if first_name in self.contacts:
-           pass
+           print("give other name ,, its already present:")
         else:
             self.contacts[first_name]=[new_contact]
     
