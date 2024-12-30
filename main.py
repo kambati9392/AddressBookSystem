@@ -62,6 +62,12 @@ class AddressBook:
 
     def search_by_city_or_state(self, city=None, state=None):
         print("\nSearching for persons in city or state...")
+        for key,contact_list in self.contacts.items():
+            for contact in contact_list:
+                if (city and contact.city.lower() == city.lower()) or (state and contact.state.lower() == state.lower()):
+                    print(key)       
+    
+    def view_by_city_or_state(self, city=None, state=None):
         search_results = []
         for contact_list in self.contacts.values():
             for contact in contact_list:
@@ -120,6 +126,15 @@ class AddressBookMain:
             results_found = True
         if not results_found:
             print("\nNo Address Books available to search.")
+    
+    def view_across_address_books(self, city=None, state=None):
+        results_found = False
+        for name, address_book in self.address_book_entry.items():
+            print(f"\nviewing in Address Book: {name}")
+            address_book.view_by_city_or_state(city=city, state=state)
+            results_found = True
+        if not results_found:
+            print("\nNo Address Books available to search.")
 
     def display_all_contacts_in_address_book(self, name):
         """Display all contacts of a specific Address Book."""
@@ -144,8 +159,9 @@ class Main:
             print('--> Enter 4 to List all Address Books:')
             print('--> Enter 5 to Work on an Address Book:')
             print('--> Enter 6 to Search for a person by City or State:')
-            print('--> Enter 7 to Display all Contacts of an Address Book:')
-            print('--> Enter 8 to Exit')
+            print("--> Enter 7 to view for a person by city or state:")
+            print('--> Enter 8 to Display all Contacts of an Address Book:')
+            print('--> Enter 9 to Exit')
             num = int(input("Enter the number: "))
             match num:
                 case 1:
@@ -174,9 +190,16 @@ class Main:
                     else:
                         print("You must provide at least a city or a state to search.")
                 case 7:
+                    search_city = input("Enter the city to search (or press Enter to skip): ")
+                    search_state = input("Enter the state to search (or press Enter to skip): ")
+                    if search_city or search_state:
+                        self.obj.view_across_address_books(city=search_city, state=search_state)
+                    else:
+                        print("You must provide at least a city or a state to search.")
+                case 8:
                     address_book_name = input("Enter the name of the Address Book: ")
                     self.obj.display_all_contacts_in_address_book(address_book_name)
-                case 8:
+                case 9:
                     print("Exiting Address Book.")
                     break
                 case _:
