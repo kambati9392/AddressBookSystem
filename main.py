@@ -92,7 +92,20 @@ class AddressBook:
             print("number of person that belongs same state or city:",count)
         else:
             print("No contacts found matching the search criteria.")
-        
+
+
+    def sort_by_persons_name(self,address_book_name):
+        sorted_entries={}
+        for name,contact_list in self.contacts.items():
+            sorted_entries[name] = sorted(contact_list, key=lambda contact: (contact.first_name.lower(), contact.last_name.lower()))
+        sorted_entries = dict(sorted(sorted_entries.items(), key=lambda item: item[0].lower()))
+        for name, contact_list in sorted_entries.items():
+            print(f"'{name}': [")
+            for contact in contact_list:
+                print(f"  {contact}")
+            print("]")
+            
+
 
 
 class AddressBookMain:
@@ -187,7 +200,8 @@ class Main:
             print("--> Enter 7 to view for a person by city or state:")
             print("--> Enter 8 to get number of persons of same city or state:")
             print('--> Enter 9 to Display all Contacts of an Address Book:')
-            print('--> Enter 10 to Exit')
+            print("--> Enter 10 to get sorted entries of an particular address book:")
+            print('--> Enter 11 to Exit')
             num = int(input("Enter the number: "))
             match num:
                 case 1:
@@ -232,8 +246,14 @@ class Main:
                 case 9:
                     address_book_name = input("Enter the name of the Address Book: ")
                     self.obj.display_all_contacts_in_address_book(address_book_name)
-
                 case 10:
+                    name = input("Enter the address book name to sort: ")
+                    address_book_name = self.obj.get_address_book(name)
+                    if address_book:
+                        address_book.sort_by_persons_name(address_book_name)
+                    else:
+                        print(f"No Address Book found with the name '{name}'.")
+                case 11:
                     print("Exiting Address Book.")
                     break
                 case _:
