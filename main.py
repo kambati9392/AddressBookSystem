@@ -12,7 +12,8 @@ class Contact:
         self.email = email
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name}, {self.address}, {self.city}, {self.state} , {self.zip_code}, {self.phone}, {self.email}"
+        return f"{self.first_name} {self.last_name}, {self.address}, {self.city}, {self.state}, {self.zip_code}, {self.phone}, {self.email}"
+
 
 class AddressBook:
     def __init__(self):
@@ -20,9 +21,13 @@ class AddressBook:
 
     def add_contact(self, first_name, last_name, address, city, state, zip_code, phone, email):
         new_contact = Contact(first_name, last_name, address, city, state, zip_code, phone, email)
-        self.contacts[first_name].append(new_contact) 
+        if first_name in self.contacts:
+            print("A contact with this first name already exists. Please provide a unique name.")
+        else:
+            self.contacts[first_name] = [new_contact]
 
-    def del_contacts(self, first_name):
+    def del_contacts(self):
+        first_name = input("Enter the first name of the contact you want to delete: ")
         if first_name in self.contacts:
             del self.contacts[first_name]
             print(f"Deleted all contacts with the first name '{first_name}'.")
@@ -40,30 +45,47 @@ class AddressBook:
                 print("]")
 
     def edit_contacts(self):
-        first_name = input("Enter the first name of the contact you want to edit: ")
+        first_name = input("Enter the name of the contact you want to edit: ")
         if first_name in self.contacts:
-            contact = self.contacts[first_name][0]  
-            contact.first_name = input("Enter the new first name: ")
-            contact.last_name = input("Enter the new last name: ")
-            contact.address = input("Enter the new address: ")
-            contact.city = input("Enter the new city: ")
-            contact.state = input("Enter the new state: ")
-            contact.zip_code = input("Enter the new zip code: ")
-            contact.phone = input("Enter the new phone number: ")
-            contact.email = input("Enter the new email: ")
+            new_first_name = input("Enter the first name: ")
+            last_name = input("Enter the second name: ")
+            address = input("Enter the address: ")
+            city = input("Enter the city name: ")
+            state = input("Enter the state name: ")
+            zip_code = input("Enter the pin code: ")
+            phone = input("Enter your mobile number: ")
+            email = input("Enter your email: ")
+            new_contact = Contact(new_first_name, last_name, address, city, state, zip_code, phone, email)
+            self.contacts[first_name].append(new_contact)
         else:
-            print(f"No contact found with the first name '{first_name}'.")
+            print("No contact found with the given first name.")
+
+    def search_by_city_or_state(self, city=None, state=None):
+        print("\nSearching for persons in city or state...")
+        search_results = []
+        for contact_list in self.contacts.values():
+            for contact in contact_list:
+                if (city and contact.city.lower() == city.lower()) or (state and contact.state.lower() == state.lower()):
+                    search_results.append(contact)
+        if search_results:
+            print("Search Results:")
+            for contact in search_results:
+                print(f"  {contact}")
+        else:
+            print("No contacts found matching the search criteria.")
+
 
 class AddressBookMain:
-    address_book_entry = {}
+    def __init__(self):
+        self.address_book_entry = {}
 
     def new_address_book(self):
         name = input("Enter the address book name: ")
         if name in self.address_book_entry:
-            print("Address book name already exists. Please provide a unique name.")
+            print("An address book with this name already exists. Please provide a unique name.")
         else:
             self.address_book_entry[name] = AddressBook()
-            print(f"Successfully added the address book '{name}'!")
+            print("Successfully added your address book!")
 
     def edit_address_book(self, present_name, new_name):
         if present_name in self.address_book_entry:
@@ -75,7 +97,7 @@ class AddressBookMain:
     def del_address_book(self, name):
         if name in self.address_book_entry:
             del self.address_book_entry[name]
-            print(f"Deleted address book '{name}'.")
+            print(f"Deleted the address book '{name}'.")
         else:
             print(f"No address book found with the name '{name}'.")
 
@@ -89,79 +111,110 @@ class AddressBookMain:
     def get_address_book(self, name):
         return self.address_book_entry.get(name)
 
+    def search_across_address_books(self, city=None, state=None):
+        print("\nSearching across all Address Books...")
+        results_found = False
+        for name, address_book in self.address_book_entry.items():
+            print(f"\nSearching in Address Book: {name}")
+            address_book.search_by_city_or_state(city=city, state=state)
+            results_found = True
+        if not results_found:
+            print("\nNo Address Books available to search.")
+
+    def display_all_contacts_in_address_book(self, name):
+        """Display all contacts of a specific Address Book."""
+        if name in self.address_book_entry:
+            print(f"\nDisplaying all contacts in Address Book: {name}")
+            address_book = self.address_book_entry[name]
+            address_book.display_contacts()
+        else:
+            print(f"No Address Book found with the name '{name}'.")
+
+
 class Main:
     def __init__(self):
         self.obj = AddressBookMain()
-        self.obj2 = AddressBook()
 
     def trigger(self):
         while True:
-            print("WELCOME TO THE ADDRESS BOOK!")
-            print("1. Create a new Address Book")
-            print("2. Edit Address Book Name")
-            print("3. Delete Address Book")
-            print("4. List all Address Books")
-            print("5. Work on Address Book")
-            print("6. Exit")
-            num = int(input("Enter your choice: "))
+            print("WELCOME TO THE ADDRESS BOOK!!")
+            print("--> Enter 1 to create a new Address Book:")
+            print("--> Enter 2 to Edit Address Book Name: ")
+            print("--> Enter 3 to Delete an Address Book:")
+            print('--> Enter 4 to List all Address Books:')
+            print('--> Enter 5 to Work on an Address Book:')
+            print('--> Enter 6 to Search for a person by City or State:')
+            print('--> Enter 7 to Display all Contacts of an Address Book:')
+            print('--> Enter 8 to Exit')
+            num = int(input("Enter the number: "))
             match num:
                 case 1:
                     self.obj.new_address_book()
                 case 2:
                     present_name = input("Enter the current address book name: ")
-                    new_name = input("Enter the new address book name: ")
+                    new_name = input("Enter the new name for the Address Book: ")
                     self.obj.edit_address_book(present_name, new_name)
                 case 3:
-                    name = input("Enter the address book name you want to delete: ")
+                    name = input("Enter the name of the Address Book to delete: ")
                     self.obj.del_address_book(name)
                 case 4:
                     self.obj.list_address_books()
                 case 5:
-                    name = input("Enter the name of the address book you want to work on: ")
+                    name = input("Enter the name of the Address Book to work on: ")
                     address_book = self.obj.get_address_book(name)
                     if address_book:
                         self.manage_address_book(address_book)
                     else:
-                        print(f"No address book found with the name '{name}'.")
+                        print(f"No Address Book found with the name '{name}'.")
                 case 6:
-                    print("Exiting address book application.")
+                    search_city = input("Enter the city to search (or press Enter to skip): ")
+                    search_state = input("Enter the state to search (or press Enter to skip): ")
+                    if search_city or search_state:
+                        self.obj.search_across_address_books(city=search_city, state=search_state)
+                    else:
+                        print("You must provide at least a city or a state to search.")
+                case 7:
+                    address_book_name = input("Enter the name of the Address Book: ")
+                    self.obj.display_all_contacts_in_address_book(address_book_name)
+                case 8:
+                    print("Exiting Address Book.")
                     break
                 case _:
                     print("Invalid choice. Please enter a valid number.")
 
     def manage_address_book(self, address_book):
         while True:
-            print("Managing Address Book!")
-            print("1. Add a contact")
-            print("2. Delete a contact")
-            print("3. Display contacts")
-            print("4. Edit a contact")
-            print("5. Exit")
-            choice = int(input("Enter your choice: "))
+            print("Managing Address Book!!")
+            print("--> Enter 1 to Add a Contact:")
+            print("--> Enter 2 to Delete a Contact:")
+            print("--> Enter 3 to Display Contacts:")
+            print("--> Enter 4 to Edit a Contact:")
+            print("--> Enter 5 to Exit to Main Menu:")
+            choice = int(input("Enter the number: "))
             match choice:
                 case 1:
                     address_book.add_contact(
                         first_name=input("Enter the first name: "),
-                        last_name=input("Enter the last name: "),
+                        last_name=input("Enter the second name: "),
                         address=input("Enter the address: "),
-                        city=input("Enter the city: "),
-                        state=input("Enter the state: "),
-                        zip_code=input("Enter the zip code: "),
-                        phone=input("Enter the phone number: "),
-                        email=input("Enter the email: ")
+                        city=input("Enter the city name: "),
+                        state=input("Enter the state name: "),
+                        zip_code=input("Enter the pin code: "),
+                        phone=input("Enter your Mobile number: "),
+                        email=input("Enter your email: ")
                     )
                 case 2:
-                    first_name = input("Enter the first name of the contact you want to delete: ")
-                    address_book.del_contacts(first_name)
+                    address_book.del_contacts()
                 case 3:
                     address_book.display_contacts()
                 case 4:
                     address_book.edit_contacts()
                 case 5:
-                    print("Exiting to main menu.")
+                    print("Exiting to Main Menu.")
                     break
                 case _:
                     print("Invalid choice. Please enter a valid number.")
+
 
 if __name__ == "__main__":
     main_app = Main()
